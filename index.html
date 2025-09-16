@@ -304,6 +304,46 @@
       50% { opacity: 0.7; }
     }
 
+    /* ===== BOTÃO "CONTACTAR SUPORTE" ===== */
+    .btn-contact {
+      background: linear-gradient(to right, var(--primary-green), var(--dark-green));
+      color: var(--text-white);
+      border: none;
+      border-radius: 16px;
+      padding: 14px 30px;
+      font-size: 1.1rem;
+      font-weight: 700; /* NEGRITO */
+      text-decoration: none; /* SEM SUBLINHADO */
+      cursor: pointer;
+      transition: all 0.3s var(--bezier);
+      margin-top: 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-contact::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.8s;
+    }
+
+    .btn-contact:hover::before {
+      left: 100%;
+    }
+
+    .btn-contact:active {
+      transform: scale(0.94) translateY(6px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    /* ===== BOTÃO "VOLTAR" ===== */
     .btn-back {
       background: transparent;
       border: 1px solid var(--border-gray);
@@ -420,11 +460,13 @@
 
   <!-- TELA DE SUPORTE (OCULTA INICIALMENTE) -->
   <div id="support-screen">
-    <img src="https://pps.whatsapp.net/v/t61.24694-24/517336218_24603566845928499_2171935921513826523_n.jpg?ccb=11-4&oh=01_Q5Aa2gEVsMytF67VtZjrGMXPdzUTj2hWYdJs48iSCpz8_pPJpQ&oe=68CCFFEA&_nc_sid=5e03e0&_nc_cat=100" alt="Perfil Suporte" class="profile-pic">
+    <!-- NOVA IMAGEM DO BOT AVIATOR -->
+    <img src="https://i.imgur.com/6X7KvJt.png" alt="Bot Aviator" class="profile-pic">
     <h2 class="support-title">Bot Aviator</h2>
     <p class="support-text">Para obter o Bot Aviator, é necessário entrar em contacto com o suporte no WhatsApp e receber todas as instruções sobre como funciona o nosso aplicativo para ganhar no jogo Aviator.</p>
     <div class="important">⚠️ Atenção: O aplicativo tem custo e não é gratuito.</div>
-    <a href="https://wa.me/258865191059?text=Ol%C3%A1%2C%20quero%20obter%20o%20Bot%20Aviator!%20Gostaria%20de%20entender%20como%20funciona%20o%20aplicativo%20para%20ganhar%20no%20jogo%20Aviator%20e%20receber%20as%20instru%C3%A7%C3%B5es%20de%20pagamento." class="btn btn-green" style="margin-top: 15px;">Contactar Suporte WhatsApp 💬</a>
+    <!-- BOTÃO DE CONTATO EM NEGRITO BRANCO, SEM SUBLINHADO -->
+    <a href="https://wa.me/258865191059?text=Ol%C3%A1%2C%20quero%20obter%20o%20Bot%20Aviator!%20Gostaria%20de%20entender%20como%20funciona%20o%20aplicativo%20para%20ganhar%20no%20jogo%20Aviator%20e%20receber%20as%20instruções%20de%20pagamento." class="btn-contact" style="margin-top: 15px;">Contactar Suporte WhatsApp 💬</a>
     <button class="btn-back" id="backBtn"><i class="fas fa-arrow-left"></i> Voltar</button>
   </div>
 
@@ -445,7 +487,7 @@
         document.getElementById('loader').style.display = 'none';
         document.getElementById('main-screen').style.display = 'flex';
       }, 800);
-    }, 2000); // ← AGORA DURA EXATAMENTE 2 SEGUNDOS
+    }, 2000);
 
     // ===== LÓGICA DOS BOTÕES =====
     const joinGroupBtn = document.getElementById('joinGroup');
