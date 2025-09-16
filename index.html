@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bot Aviator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* ===== CORES E VARIÁVEIS ===== */
+    :root {
+      --primary-red: #e50000;
+      --glow-red: #ff3366;
+      --primary-green: #2ecc71;
+      --dark-green: #27ae60;
+      --primary-blue: #3498db;
+      --dark-blue: #2980b9;
+      --text-light: #eee;
+      --text-white: #fff;
+      --text-warning: #FFD700;
+      --alert-bg: #1a1a1a;
+      --alert-border: #444;
+      --border-gray: #444;
+      --hover-light: #fff;
+      --bezier: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* ===== RESET E BASE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #000;
+      color: var(--text-white);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: opacity 0.8s var(--bezier);
+    }
+
+    /* ===== TELA DE CARREGAMENTO (2 SEGUNDOS) ===== */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .spinner {
+      width: 80px;
+      height: 80px;
+      border: 3px solid var(--text-white);
+      border-radius: 50%;
+      border-top-color: var(--primary-red);
+      animation: spin 1.2s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #loader p {
+      color: var(--text-white);
+      font-weight: bold;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+    }
+
+    /* ===== CONTAINER PRINCIPAL ===== */
+    #main-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 400px;
+      animation: fadeInUp 0.8s var(--bezier);
+    }
+
+    .container {
+      background: rgba(15, 15, 15, 0.8);
+      border-radius: 24px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      max-width: 90%;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ===== ÍCONE DO AVIÃO ===== */
+    .plane-container {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      margin: 20px auto;
+      border-radius: 50%;
+      background: var(--primary-red);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 30px rgba(229, 0, 0, 0.3);
+      animation: pulseGlow 3s ease-in-out infinite alternate, rotatePlane 10s linear infinite;
+    }
+
+    @keyframes pulseGlow {
+      from { box-shadow: 0 0 20px rgba(229, 0, 0, 0.3); }
+      to { box-shadow: 0 0 40px rgba(229, 0, 0, 0.7); }
+    }
+
+    @keyframes rotatePlane {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .plane-icon {
+      color: white;
+      font-size: 50px;
+    }
+
+    /* ===== TÍTULO ===== */
+    h1 {
+      color: var(--glow-red);
+      font-weight: 900;
+      font-size: 1.8rem;
+      margin: 20px 0;
+      text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+      animation: glowPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { text-shadow: 0 0 10px rgba(255, 51, 102, 0.5); }
+      50% { text-shadow: 0 0 25px rgba(255, 51, 102, 0.9); }
+    }
+
+    /* ===== TEXTO DESCRIPTIVO ===== */
+    .description {
+      color: var(--text-light);
+      font-size: 1rem;
+      line-height: 1.6;
+      margin: 20px 0;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== BOTÕES ===== */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      margin: 12px 0;
+      border: none;
+      border-radius: 16px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s var(--bezier);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.8s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:active {
+      transform: scale(0.94) translateY(6px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .btn-green {
+      background: linear-gradient(to right, var(--primary-green), var(--dark-green));
+      color: white;
+    }
+
+    .btn-blue {
+      background: linear-gradient(to right, var(--primary-blue), var(--dark-blue));
+      color: white;
+    }
+
+    /* ===== AVISO AMARELO (SEMPRE VISÍVEL) ===== */
+    .warning {
+      background: var(--alert-bg);
+      border: 1px solid var(--alert-border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 25px;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text-light);
+      animation: slideUp 0.8s var(--bezier);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== TELA DE SUPORTE (INICIA OCULTA) ===== */
+    #support-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      width: 100%;
+      max-width: 400px;
+      background: rgba(15, 15, 15, 0.8);
+      border-radius: 24px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      margin-top: 20px;
+      animation: fadeInUp 0.8s var(--bezier);
+    }
+
+    .profile-pic {
+      width: 140px;
+      height: 140px;
+      border-radius: 18px;
+      object-fit: cover;
+      margin: 20px auto;
+      box-shadow: 0 0 25px rgba(255, 51, 102, 0.5);
+      animation: breathe 3s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+
+    .support-title {
+      color: var(--text-white);
+      font-weight: 900;
+      font-size: 2rem;
+      margin: 15px 0;
+      text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+      animation: glowPulse 2s ease-in-out infinite;
+    }
+
+    .support-text {
+      color: var(--text-light);
+      font-size: 1rem;
+      line-height: 1.7;
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .important {
+      background: #1a1a1a;
+      border: 1px solid #FFD700;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 20px 0;
+      color: var(--text-warning);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: center;
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .btn-back {
+      background: transparent;
+      border: 1px solid var(--border-gray);
+      color: var(--text-light);
+      border-radius: 16px;
+      padding: 12px 24px;
+      margin-top: 20px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s var(--bezier);
+    }
+
+    .btn-back:hover {
+      color: var(--text-white);
+      border-color: var(--text-white);
+    }
+
+    /* ===== MODAL ALERT ===== */
+    #modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    #modal-content {
+      background: rgba(15, 15, 15, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      max-width: 80%;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    }
+
+    #modal-title {
+      color: #ff3366;
+      font-weight: 900;
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+
+    #modal-text {
+      color: var(--text-light);
+      font-size: 1.1rem;
+      margin-bottom: 25px;
+    }
+
+    #modal-btn {
+      background: linear-gradient(to right, var(--primary-green), var(--dark-green));
+      color: white;
+      border: none;
+      border-radius: 16px;
+      padding: 14px 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s var(--bezier);
+    }
+
+    #modal-btn:hover {
+      transform: scale(1.02);
+    }
+
+    /* ===== RESPONSIVO ===== */
+    @media (max-width: 480px) {
+      .container, #support-screen, #modal-content {
+        padding: 20px;
+        width: 90%;
+      }
+      h1 { font-size: 1.6rem; }
+      .support-title { font-size: 1.8rem; }
+      .btn { padding: 14px; font-size: 1rem; }
+      .plane-icon { font-size: 40px; }
+      .profile-pic { width: 120px; height: 120px; }
+      .warning, .important { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TELA DE CARREGAMENTO (2 SEGUNDOS) -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <p>Aguarde um momento</p>
+  </div>
+
+  <!-- TELA PRINCIPAL (OCULTA INICIALMENTE) -->
+  <div id="main-screen">
+    <div class="container">
+      <div class="plane-container">
+        <i class="fas fa-plane plane-icon"></i>
+      </div>
+      <h1>Antes de obter...</h1>
+      <p class="description">Entre no nosso grupo de WhatsApp para receber dicas exclusivas de como ganhar no Aviator!</p>
+      <button class="btn btn-green" id="joinGroup">Entrar no Grupo</button>
+      <button class="btn btn-blue" id="getBot">Obter Bot Aviator</button>
+      
+      <!-- AVISO SEMPRE VISÍVEL -->
+      <div class="warning">
+        ⚠️ É obrigatório entrar no grupo primeiro para continuar
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA DE SUPORTE (OCULTA INICIALMENTE) -->
+  <div id="support-screen">
+    <img src="https://pps.whatsapp.net/v/t61.24694-24/517336218_24603566845928499_2171935921513826523_n.jpg?ccb=11-4&oh=01_Q5Aa2gEVsMytF67VtZjrGMXPdzUTj2hWYdJs48iSCpz8_pPJpQ&oe=68CCFFEA&_nc_sid=5e03e0&_nc_cat=100" alt="Perfil Suporte" class="profile-pic">
+    <h2 class="support-title">Bot Aviator</h2>
+    <p class="support-text">Para obter o Bot Aviator, é necessário entrar em contacto com o suporte no WhatsApp e receber todas as instruções sobre como funciona o nosso aplicativo para ganhar no jogo Aviator.</p>
+    <div class="important">⚠️ Atenção: O aplicativo tem custo e não é gratuito.</div>
+    <a href="https://wa.me/258865191059?text=Ol%C3%A1%2C%20quero%20obter%20o%20Bot%20Aviator!%20Gostaria%20de%20entender%20como%20funciona%20o%20aplicativo%20para%20ganhar%20no%20jogo%20Aviator%20e%20receber%20as%20instru%C3%A7%C3%B5es%20de%20pagamento." class="btn btn-green" style="margin-top: 15px;">Contactar Suporte WhatsApp 💬</a>
+    <button class="btn-back" id="backBtn"><i class="fas fa-arrow-left"></i> Voltar</button>
+  </div>
+
+  <!-- MODAL ALERT -->
+  <div id="modal-overlay">
+    <div id="modal-content">
+      <h3 id="modal-title">Por favor</h3>
+      <p id="modal-text">Primeiro entre no grupo, depois volte a obter o Bot Aviator</p>
+      <button id="modal-btn">OK</button>
+    </div>
+  </div>
+
+  <script>
+    // ===== TELA DE CARREGAMENTO (2 SEGUNDOS) =====
+    setTimeout(() => {
+      document.getElementById('loader').style.opacity = '0';
+      setTimeout(() => {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('main-screen').style.display = 'flex';
+      }, 800);
+    }, 2000); // ← AGORA DURA EXATAMENTE 2 SEGUNDOS
+
+    // ===== LÓGICA DOS BOTÕES =====
+    const joinGroupBtn = document.getElementById('joinGroup');
+    const getBotBtn = document.getElementById('getBot');
+    const supportScreen = document.getElementById('support-screen');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalBtn = document.getElementById('modal-btn');
+    const backBtn = document.getElementById('backBtn');
+
+    joinGroupBtn.addEventListener('click', () => {
+      window.open('https://chat.whatsapp.com/Kiyjak0DMM1FCIr4GYF19H', '_blank');
+      localStorage.setItem('hasJoinedGroup', 'true');
+    });
+
+    getBotBtn.addEventListener('click', () => {
+      if (localStorage.getItem('hasJoinedGroup') === 'true') {
+        document.querySelector('#main-screen').style.opacity = '0';
+        setTimeout(() => {
+          document.querySelector('#main-screen').style.display = 'none';
+          supportScreen.style.display = 'flex';
+          setTimeout(() => { supportScreen.style.opacity = '1'; }, 10);
+        }, 800);
+      } else {
+        modalOverlay.style.display = 'flex';
+      }
+    });
+
+    modalBtn.addEventListener('click', () => {
+      modalOverlay.style.display = 'none';
+    });
+
+    backBtn.addEventListener('click', () => {
+      supportScreen.style.opacity = '0';
+      setTimeout(() => {
+        supportScreen.style.display = 'none';
+        document.querySelector('#main-screen').style.display = 'flex';
+        setTimeout(() => { document.querySelector('#main-screen').style.opacity = '1'; }, 10);
+      }, 800);
+    });
+  </script>
+
+</body>
+</html>
