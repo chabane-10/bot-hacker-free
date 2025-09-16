@@ -170,7 +170,7 @@
       transform: translateY(0);
     }
 
-    /* ===== BOTÕES ===== */
+    /* ===== BOTÕES PRINCIPAIS — ANIMAÇÃO DE CLIQUE COM ONDA DE LUZ ===== */
     .btn {
       display: block;
       width: 100%;
@@ -185,6 +185,7 @@
       position: relative;
       overflow: hidden;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+      color: white;
     }
 
     .btn::before {
@@ -207,14 +208,34 @@
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
     }
 
+    .btn:active::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transform: translate(-50%, -50%);
+      animation: ripple 0.8s ease-out forwards;
+      z-index: 1;
+    }
+
+    @keyframes ripple {
+      to {
+        width: 300px;
+        height: 300px;
+        opacity: 0;
+      }
+    }
+
     .btn-green {
       background: linear-gradient(to right, var(--primary-green), var(--dark-green));
-      color: white;
     }
 
     .btn-blue {
       background: linear-gradient(to right, var(--primary-blue), var(--dark-blue));
-      color: white;
     }
 
     /* ===== AVISO AMARELO (SEMPRE VISÍVEL) ===== */
@@ -243,7 +264,7 @@
       display: none;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
+      padding: 25px 20px;
       width: 100%;
       max-width: 400px;
       background: rgba(15, 15, 15, 0.8);
@@ -259,7 +280,7 @@
       height: 140px;
       border-radius: 18px;
       object-fit: cover;
-      margin: 20px auto;
+      margin: 15px auto 20px;
       box-shadow: 0 0 25px rgba(255, 51, 102, 0.5);
       animation: breathe 3s ease-in-out infinite;
     }
@@ -271,18 +292,19 @@
 
     .support-title {
       color: var(--text-white);
-      font-weight: 900;
-      font-size: 2rem;
-      margin: 15px 0;
+      font-weight: 700;
+      font-size: 1.7rem;
+      margin: 10px 0 10px;
       text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
       animation: glowPulse 2s ease-in-out infinite;
     }
 
     .support-text {
       color: var(--text-light);
-      font-size: 1rem;
-      line-height: 1.7;
-      margin: 20px 0;
+      font-size: 0.9rem; /* DIMINUÍDO PARA SER MAIS COMPACTO */
+      font-weight: 700; /* NEGRITO FORTE */
+      line-height: 1.6;
+      margin: 15px 0 20px;
       text-align: center;
     }
 
@@ -290,11 +312,11 @@
       background: #1a1a1a;
       border: 1px solid #FFD700;
       border-radius: 12px;
-      padding: 12px;
-      margin: 20px 0;
+      padding: 10px;
+      margin: 15px 0;
       color: var(--text-warning);
-      font-weight: 600;
-      font-size: 0.95rem;
+      font-weight: 700;
+      font-size: 0.9rem;
       text-align: center;
       animation: blink 2s infinite;
     }
@@ -312,8 +334,8 @@
       border-radius: 16px;
       padding: 14px 30px;
       font-size: 1.1rem;
-      font-weight: 700; /* NEGRITO */
-      text-decoration: none; /* SEM SUBLINHADO */
+      font-weight: 700;
+      text-decoration: none;
       cursor: pointer;
       transition: all 0.3s var(--bezier);
       margin-top: 15px;
@@ -321,6 +343,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      width: 100%;
     }
 
     .btn-contact::before {
@@ -343,20 +366,35 @@
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
     }
 
+    .btn-contact:active::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transform: translate(-50%, -50%);
+      animation: ripple 0.8s ease-out forwards;
+      z-index: 1;
+    }
+
     /* ===== BOTÃO "VOLTAR" ===== */
     .btn-back {
       background: transparent;
       border: 1px solid var(--border-gray);
-      color: var(--text-light);
+      color: #ccc;
       border-radius: 16px;
       padding: 12px 24px;
-      margin-top: 20px;
+      margin-top: 15px;
       font-size: 1rem;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       transition: all 0.3s var(--bezier);
+      text-decoration: none;
     }
 
     .btn-back:hover {
@@ -417,6 +455,25 @@
       transform: scale(1.02);
     }
 
+    #modal-btn:active {
+      transform: scale(0.94) translateY(6px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    #modal-btn:active::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transform: translate(-50%, -50%);
+      animation: ripple 0.8s ease-out forwards;
+      z-index: 1;
+    }
+
     /* ===== RESPONSIVO ===== */
     @media (max-width: 480px) {
       .container, #support-screen, #modal-content {
@@ -424,11 +481,11 @@
         width: 90%;
       }
       h1 { font-size: 1.6rem; }
-      .support-title { font-size: 1.8rem; }
+      .support-title { font-size: 1.6rem; }
       .btn { padding: 14px; font-size: 1rem; }
       .plane-icon { font-size: 40px; }
       .profile-pic { width: 120px; height: 120px; }
-      .warning, .important { padding: 14px; }
+      .warning, .important { padding: 12px; font-size: 0.9rem; }
     }
   </style>
 </head>
@@ -460,14 +517,12 @@
 
   <!-- TELA DE SUPORTE (OCULTA INICIALMENTE) -->
   <div id="support-screen">
-    <!-- IMAGEM REAL DO BOT AVIATOR -->
     <img src="https://i.postimg.cc/PNHCLy5d/IMG-20250916-095629.jpg" alt="Bot Aviator" class="profile-pic">
     <h2 class="support-title">Bot Aviator</h2>
     <p class="support-text">Para obter o Bot Aviator, é necessário entrar em contacto com o suporte no WhatsApp e receber todas as instruções sobre como funciona o nosso aplicativo para ganhar no jogo Aviator.</p>
     <div class="important">⚠️ Atenção: O aplicativo tem custo e não é gratuito.</div>
-    <!-- BOTÃO DE CONTATO EM NEGRITO BRANCO, SEM SUBLINHADO -->
-    <a href="https://wa.me/258865191059?text=Ol%C3%A1%2C%20quero%20obter%20o%20Bot%20Aviator!%20Gostaria%20de%20entender%20como%20funciona%20o%20aplicativo%20para%20ganhar%20no%20jogo%20Aviator%20e%20receber%20as%20instruções%20de%20pagamento." class="btn-contact" style="margin-top: 15px;">Contactar Suporte WhatsApp 💬</a>
-    <button class="btn-back" id="backBtn"><i class="fas fa-arrow-left"></i> Voltar</button>
+    <a href="https://wa.me/258865191059?text=Ol%C3%A1%2C%20quero%20obter%20o%20Bot%20Aviator!%20Gostaria%20de%20entender%20como%20funciona%20o%20aplicativo%20para%20ganhar%20no%20jogo%20Aviator%20e%20receber%20as%20instru%C3%A7%C3%B5es%20de%20pagamento." class="btn-contact">Contactar Suporte WhatsApp 💬</a>
+    <a href="#" class="btn-back" id="backBtn"><i class="fas fa-arrow-left"></i> Voltar</a>
   </div>
 
   <!-- MODAL ALERT -->
@@ -519,7 +574,8 @@
       modalOverlay.style.display = 'none';
     });
 
-    backBtn.addEventListener('click', () => {
+    backBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       supportScreen.style.opacity = '0';
       setTimeout(() => {
         supportScreen.style.display = 'none';
