@@ -301,8 +301,8 @@
 
     .support-text {
       color: var(--text-light);
-      font-size: 0.9rem; /* DIMINUÍDO PARA SER MAIS COMPACTO */
-      font-weight: 700; /* NEGRITO FORTE */
+      font-size: 0.9rem;
+      font-weight: 700;
       line-height: 1.6;
       margin: 15px 0 20px;
       text-align: center;
@@ -515,7 +515,7 @@
     </div>
   </div>
 
-  <!-- TELA DE SUPORTE (OCULTA INICIALMENTE) -->
+  <!-- TELA DE SUPORTE (INICIA OCULTA) -->
   <div id="support-screen">
     <img src="https://i.postimg.cc/PNHCLy5d/IMG-20250916-095629.jpg" alt="Bot Aviator" class="profile-pic">
     <h2 class="support-title">Bot Aviator</h2>
@@ -544,7 +544,7 @@
       }, 800);
     }, 2000);
 
-    // ===== LÓGICA DOS BOTÕES =====
+    // ===== LÓGICA DOS BOTÕES (FLUXO CÍCLICO) =====
     const joinGroupBtn = document.getElementById('joinGroup');
     const getBotBtn = document.getElementById('getBot');
     const supportScreen = document.getElementById('support-screen');
@@ -552,13 +552,17 @@
     const modalBtn = document.getElementById('modal-btn');
     const backBtn = document.getElementById('backBtn');
 
+    // Clique em "Entrar no Grupo"
     joinGroupBtn.addEventListener('click', () => {
       window.open('https://chat.whatsapp.com/Kiyjak0DMM1FCIr4GYF19H', '_blank');
-      localStorage.setItem('hasJoinedGroup', 'true');
+      // Define estado temporário: usuário entrou no grupo
+      sessionStorage.setItem('joined', 'true');
     });
 
+    // Clique em "Obter Bot Aviator"
     getBotBtn.addEventListener('click', () => {
-      if (localStorage.getItem('hasJoinedGroup') === 'true') {
+      if (sessionStorage.getItem('joined') === 'true') {
+        // Mostra tela de suporte
         document.querySelector('#main-screen').style.opacity = '0';
         setTimeout(() => {
           document.querySelector('#main-screen').style.display = 'none';
@@ -566,19 +570,24 @@
           setTimeout(() => { supportScreen.style.opacity = '1'; }, 10);
         }, 800);
       } else {
+        // Mostra alerta
         modalOverlay.style.display = 'flex';
       }
     });
 
+    // Clique em "OK" no alerta
     modalBtn.addEventListener('click', () => {
       modalOverlay.style.display = 'none';
     });
 
+    // Clique em "Voltar" da tela de suporte
     backBtn.addEventListener('click', (e) => {
       e.preventDefault();
       supportScreen.style.opacity = '0';
       setTimeout(() => {
         supportScreen.style.display = 'none';
+        // REMOVE o estado temporário
+        sessionStorage.removeItem('joined');
         document.querySelector('#main-screen').style.display = 'flex';
         setTimeout(() => { document.querySelector('#main-screen').style.opacity = '1'; }, 10);
       }, 800);
